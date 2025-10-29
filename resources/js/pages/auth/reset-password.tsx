@@ -1,94 +1,103 @@
-import { update } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
-
-import InputError from '@/components/input-error';
+import { useForm, Link, usePage } from '@inertiajs/react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
 
-interface ResetPasswordProps {
-    token: string;
-    email: string;
-}
+export default function ResetPassword() {
+    const { props } = usePage();
+    const { token, email: defaultEmail } = props as { token: string; email?: string };
 
-export default function ResetPassword({ token, email }: ResetPasswordProps) {
+    const { data, setData, post, processing, errors } = useForm({
+        token: token || '',
+        email: defaultEmail || '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('password.update'));
+    };
+
     return (
-        <AuthLayout
-            title="Reset password"
-            description="Please enter your new password below"
-        >
-            <Head title="Reset password" />
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold text-center">
+                        新しいパスワードを設定
+                    </CardTitle>
+                </CardHeader>
 
-            <Form
-                {...update.form()}
-                transform={(data) => ({ ...data, token, email })}
-                resetOnSuccess={['password', 'password_confirmation']}
-            >
-                {({ processing, errors }) => (
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* メール */}
+                        <div>
+                            <Label htmlFor="email">メールアドレス</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                name="email"
-                                autoComplete="email"
-                                value={email}
-                                className="mt-1 block w-full"
-                                readOnly
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
                             />
-                            <InputError
-                                message={errors.email}
-                                className="mt-2"
-                            />
+                            {errors.email && (
+                                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                            )}
                         </div>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                        {/* 新しいパスワード */}
+                        <div>
+                            <Label htmlFor="password">新しいパスワード</Label>
                             <Input
                                 id="password"
                                 type="password"
-                                name="password"
-                                autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                autoFocus
-                                placeholder="Password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                required
                             />
-                            <InputError message={errors.password} />
+                            {errors.password && (
+                                <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+                            )}
                         </div>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">
-                                Confirm password
-                            </Label>
+                        {/* 確認用パスワード */}
+                        <div>
+                            <Label htmlFor="password_confirmation">パスワード（確認）</Label>
                             <Input
                                 id="password_confirmation"
                                 type="password"
-                                name="password_confirmation"
-                                autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                placeholder="Confirm password"
+                                value={data.password_confirmation}
+                                onChange={(e) =>
+                                    setData('password_confirmation', e.target.value)
+                                }
+                                required
                             />
-                            <InputError
-                                message={errors.password_confirmation}
-                                className="mt-2"
-                            />
+                            {errors.password_confirmation && (
+                                <p className="text-red-600 text-sm mt-1">
+                                    {errors.password_confirmation}
+                                </p>
+                            )}
                         </div>
 
                         <Button
-                            type="submit"
-                            className="mt-4 w-full"
                             disabled={processing}
-                            data-test="reset-password-button"
+                            className="w-full mt-4"
                         >
-                            {processing && <Spinner />}
-                            Reset password
+                            パスワードを更新
                         </Button>
+                    </form>
+
+                    <div className="mt-6 text-sm text-center">
+                        <Link
+                            href={route('login')}
+                            className="text-blue-600 underline"
+                        >
+                            ログイン画面に戻る
+                        </Link>
                     </div>
-                )}
-            </Form>
-        </AuthLayout>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

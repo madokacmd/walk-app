@@ -1,120 +1,98 @@
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+import { useForm, Link } from '@inertiajs/react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
 
-interface LoginProps {
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-}
+export default function Login() {
+    const { data, setData, post, processing, errors } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
 
-export default function Login({
-    status,
-    canResetPassword,
-    canRegister,
-}: LoginProps) {
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('login'));
+    };
+
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
-        >
-            <Head title="Log in" />
-
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
-            >
-                {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="current-password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="flex items-center space-x-3">
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                    tabIndex={3}
-                                />
-                                <Label htmlFor="remember">Remember me</Label>
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <Spinner />}
-                                Log in
-                            </Button>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold text-center">
+                        ログイン
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <Label htmlFor="email">メールアドレス</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                            />
+                            {errors.email && (
+                                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                            )}
                         </div>
 
-                        {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
-                                <TextLink href={register()} tabIndex={5}>
-                                    Sign up
-                                </TextLink>
-                            </div>
-                        )}
-                    </>
-                )}
-            </Form>
+                        <div>
+                            <Label htmlFor="password">パスワード</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                required
+                            />
+                            {errors.password && (
+                                <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+                            )}
+                        </div>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-        </AuthLayout>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                id="remember"
+                                type="checkbox"
+                                checked={data.remember}
+                                onChange={(e) => setData('remember', e.target.checked)}
+                            />
+                            <Label htmlFor="remember" className="text-sm">
+                                ログイン状態を保持する
+                            </Label>
+                        </div>
+
+                        <Button
+                            disabled={processing}
+                            className="w-full mt-2"
+                        >
+                            ログイン
+                        </Button>
+                    </form>
+
+                    <div className="mt-4 text-sm text-center">
+                        <Link
+                            href={route('register')}
+                            className="text-blue-600 underline"
+                        >
+                            アカウントをお持ちでない方はこちら
+                        </Link>
+                    </div>
+
+                    <div className="mt-2 text-sm text-center">
+                        <Link
+                            href={route('password.request')}
+                            className="text-blue-600 underline"
+                        >
+                            パスワードを忘れた方はこちら
+                        </Link>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

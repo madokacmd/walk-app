@@ -1,115 +1,100 @@
-import { login } from '@/routes';
-import { store } from '@/routes/register';
-import { Form, Head } from '@inertiajs/react';
-
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+import { useForm, Link } from '@inertiajs/react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
+    const { data, setData, post, errors, processing } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const submit = (e) => {
+        e.preventDefault();
+        post(route('register'));
+    };
+
     return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
-        >
-            <Head title="Register" />
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password', 'password_confirmation']}
-                disableWhileProcessing
-                className="flex flex-col gap-6"
-            >
-                {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
-                                />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
-                            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold text-center">
+                        アカウント登録
+                    </CardTitle>
+                </CardHeader>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
-                                />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
-                            >
-                                {processing && <Spinner />}
-                                Create account
-                            </Button>
+                <CardContent>
+                    <form onSubmit={submit} className="space-y-4">
+                        <div>
+                            <Label htmlFor="name">名前</Label>
+                            <Input
+                                id="name"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                            />
+                            {errors.name && (
+                                <p className="text-red-600 text-sm mt-1">{errors.name}</p>
+                            )}
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
+                        <div>
+                            <Label htmlFor="email">メールアドレス</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                            />
+                            {errors.email && (
+                                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                            )}
                         </div>
-                    </>
-                )}
-            </Form>
-        </AuthLayout>
+
+                        <div>
+                            <Label htmlFor="password">パスワード</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                required
+                            />
+                            {errors.password && (
+                                <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <Label htmlFor="password_confirmation">パスワード確認</Label>
+                            <Input
+                                id="password_confirmation"
+                                type="password"
+                                value={data.password_confirmation}
+                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                required
+                            />
+                            {errors.password_confirmation && (
+                                <p className="text-red-600 text-sm mt-1">{errors.password_confirmation}</p>
+                            )}
+                        </div>
+
+                        <Button disabled={processing} className="w-full">
+                            登録
+                        </Button>
+                    </form>
+
+                    <p className="mt-4 text-sm text-center">
+                        <Link href={route('login')} className="text-blue-600 underline ml-1">
+                            既に登録済みの方はログイン！
+                        </Link>
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

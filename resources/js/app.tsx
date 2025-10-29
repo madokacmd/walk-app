@@ -5,6 +5,19 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+import { route } from 'ziggy-js';
+import { Ziggy } from './ziggy';
+
+// TypeScript: window に route を載せる宣言
+declare global {
+    interface Window {
+        route: typeof route;
+    }
+}
+
+// route関数をZiggy情報付きで使えるようにする
+window.route = (name, params, absolute) =>
+    route(name, params, absolute, Ziggy);
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
