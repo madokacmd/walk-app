@@ -12,14 +12,19 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Users, UserPlus} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: route('admin.dashboard'),
-        icon: LayoutGrid,
+        title: 'ユーザー一覧',
+        href: route('admin.users.index'),
+        icon: Users,
+    },
+    {
+        title: 'ユーザー作成',
+        href: route('admin.users.create'),
+        icon: UserPlus,
     },
 ];
 
