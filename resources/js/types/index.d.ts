@@ -1,5 +1,16 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
+import { PageProps as InertiaPageProps } from '@inertiajs/core';
+
+declare global {
+  interface PageProps {
+    flash?: {
+      message?: string;
+      success?: string;
+      error?: string;
+    };
+  }
+}
 
 export interface Auth {
     user: User;
@@ -41,3 +52,4 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+export { };

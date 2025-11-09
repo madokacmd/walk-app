@@ -6,6 +6,7 @@ use Laravel\Fortify\Features;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('admin/dashboard');
         })->name('admin.dashboard');
+        Route::resource('users', UserController::class)->names('admin.users');
     });
 });
 

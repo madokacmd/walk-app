@@ -16,6 +16,10 @@ class User extends Authenticatable
     public const ROLE_USER = 1;
     public const ROLE_ADMIN = 2;
 
+    public const SEX_OTHER = 0;
+    public const SEX_MALE = 1;
+    public const SEX_FEMALE = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,6 +29,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'sex',
+        'birthday',
     ];
 
     /**
@@ -50,6 +57,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'role' => 'integer',
+            'sex' => 'integer',
+            'birthday' => 'date',
         ];
     }
 }
